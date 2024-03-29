@@ -6,7 +6,9 @@ const userSchema = new Schema({
     password: String,
     mobile: String,
     gender: String,
-    bio: String
+    bio: String,
+    address: Array,
+    orders: Array,
 })
 const User = new model('user', userSchema);
 export default User;

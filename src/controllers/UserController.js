@@ -5,7 +5,6 @@ import jwt from 'jsonwebtoken';
 export const Login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        console.log(email, password);
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(404).json({ message: "email not found" });
@@ -15,7 +14,7 @@ export const Login = async (req, res) => {
             return res.status(404).json({ message: "Incorrect password" });
         }
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
-        return res.status(201).json({ token, message: "login successful" });
+        return res.status(201).json({ user, token, message: "login successful" });
     } catch (error) {
         console.log(error);
         res.status(500).json({ error, message: "Internal server error" })
@@ -24,7 +23,6 @@ export const Login = async (req, res) => {
 export const Register = async (req, res) => {
     try {
         const { name, email, password } = req.body;
-        console.log(name, email, password);
         const userExists = await User.findOne({ email });
         if (userExists) {
             return res.status(409).json({ message: "User already exist" });
@@ -36,20 +34,22 @@ export const Register = async (req, res) => {
         const newUser = await User.create({ name, email, password: hashPassword });
         console.log(newUser);
         const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET);
-        return res.status(201).json({ token, message: "Registration successful" });
+        return res.status(201).json({ user: newUser, token, message: "Registration successful" });
     } catch (error) {
         console.log(error)
         return res.status(500).json({ message: "Internal server error" });
     }
 }
 
-export const ViewProfile = async () => {
-    try {
-        const { _id } = req.body;
-        const user = await User.findById(_id);
-        console.log(user)
+export const updateProfile = async (req, res) => {
+    try { 
+        const id = req.userId;
+        const { name, mobile, gender, bio } = req.body;
+        const user = await User.findById(id);
         if (!user) return res.status(404).json({ message: "User not found" });
-        res.status(200).json({ user, message: "user found successfully" })
+        await User.findByIdAndUpdate(id, { name, mobile, gender, bio });
+        const updatedUser = await User.findById(id);
+        res.status(201).json({ user: updatedUser, message: "Profile updated" })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ message: "Internal server error" });
