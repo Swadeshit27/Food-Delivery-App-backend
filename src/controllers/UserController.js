@@ -42,9 +42,11 @@ export const Register = async (req, res) => {
 }
 
 export const updateProfile = async (req, res) => {
-    try { 
+    try {
+        console.log("enter");
         const id = req.userId;
         const { name, mobile, gender, bio } = req.body;
+        console.log(name, mobile, gender, bio, id);
         const user = await User.findById(id);
         if (!user) return res.status(404).json({ message: "User not found" });
         await User.findByIdAndUpdate(id, { name, mobile, gender, bio });
