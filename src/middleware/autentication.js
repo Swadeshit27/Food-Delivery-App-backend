@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 
 const authentication = async (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    console.log(authHeader);
+    // console.log(authHeader);
     if (!authHeader) {
         return res.status(404).json("Authorization header is missing");
     }
