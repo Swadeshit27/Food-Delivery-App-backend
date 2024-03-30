@@ -4,6 +4,6 @@ import { getOrderHistory, OrderFood } from '../controllers/OrderController.js';
 const router = express.Router();
 
 router.route('/').post(authentication, OrderFood)
-router.route('/get').post(authentication, getOrderHistory)
+router.route('/get').get(authentication, getOrderHistory)
 
 export default router;
