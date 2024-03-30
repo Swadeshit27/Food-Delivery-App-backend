@@ -32,7 +32,6 @@ export const Register = async (req, res) => {
         const hashPassword = await bcrypt.hash(password, salt);
         // save to database
         const newUser = await User.create({ name, email, password: hashPassword });
-        console.log(newUser);
         const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET);
         return res.status(201).json({ user: newUser, token, message: "Registration successful" });
     } catch (error) {
@@ -43,14 +42,11 @@ export const Register = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
     try {
-        console.log("enter");
         const id = req.userId;
         const { name, mobile, gender, bio } = req.body;
-        console.log(name, mobile, gender, bio, id);
         const user = await User.findById(id);
         if (!user) return res.status(404).json({ message: "User not found" });
-        await User.findByIdAndUpdate(id, { name, mobile, gender, bio });
-        const updatedUser = await User.findById(id);
+        const updatedUser = await User.findByIdAndUpdate(id, { name, mobile, gender, bio }, { new: true });
         res.status(201).json({ user: updatedUser, message: "Profile updated" })
     } catch (error) {
         console.log(error)
